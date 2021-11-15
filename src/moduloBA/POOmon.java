@@ -5,25 +5,46 @@ import java.util.Random;
 public class POOmon {
     private String nome;
     private int energiaVital;
+    private Ambiente ambienteOrigem;
+    private Ambiente ambienteBatalha;
 
-    public POOmon(String nome) {
+    public POOmon(String nome, Ambiente ambienteOrigem) {
         this.nome = nome;
+        this.ambienteOrigem = ambienteOrigem;
         this.energiaVital = 500;
     }
 
     public void ataqueBasico(POOmon pooMonDefensor) {
         int danoAtaque = 30;
+
+        if (this.estaEmSeuAmbienteOrigem()) {
+            danoAtaque = (int) (danoAtaque * 1.2);
+        }
+
+        if (pooMonDefensor.estaEmSeuAmbienteOrigem()) {
+            danoAtaque = (int) (danoAtaque * 0.9);
+        }
+
         pooMonDefensor.setEnergiaVital(pooMonDefensor.getEnergiaVital() - danoAtaque);
     }
 
     public void ataqueAgressivo(POOmon pooMonDefensor) {
         int danoAtaque = new Random().nextInt((99 - 40) + 1) + 40;
+        int danoAtaqueBonificado = danoAtaque;
 
         if (danoAtaque >= this.getEnergiaVital()) {
             throw new IllegalArgumentException("Dano de ataque não pode ser maior ou igual a energia vital");
         }
 
-        pooMonDefensor.setEnergiaVital(pooMonDefensor.getEnergiaVital() - danoAtaque);
+        if (this.estaEmSeuAmbienteOrigem()) {
+            danoAtaqueBonificado = (int) (danoAtaqueBonificado * 1.2);
+        }
+
+        if (pooMonDefensor.estaEmSeuAmbienteOrigem()) {
+            danoAtaqueBonificado = (int) (danoAtaqueBonificado * 0.9);
+        }
+
+        pooMonDefensor.setEnergiaVital(pooMonDefensor.getEnergiaVital() - danoAtaqueBonificado);
         this.setEnergiaVital(this.getEnergiaVital() - danoAtaque);
     }
 
@@ -33,6 +54,14 @@ public class POOmon {
 
         if ((danoAtaque * 2) >= this.getEnergiaVital()) {
             throw new IllegalArgumentException("Dano de ataque não pode ser maior ou igual ao dobro da energia vital");
+        }
+
+        if (this.estaEmSeuAmbienteOrigem()) {
+            danoAtaqueBonificado = (int) (danoAtaqueBonificado * 1.2);
+        }
+
+        if (pooMonDefensor.estaEmSeuAmbienteOrigem()) {
+            danoAtaqueBonificado = (int) (danoAtaqueBonificado * 0.9);
         }
 
         pooMonDefensor.setEnergiaVital(pooMonDefensor.getEnergiaVital() - danoAtaqueBonificado);
@@ -45,5 +74,13 @@ public class POOmon {
 
     public void setEnergiaVital(int energiaVital) {
         this.energiaVital = energiaVital;
+    }
+
+    public void setAmbienteBatalha(Ambiente ambienteBatalha) {
+        this.ambienteBatalha = ambienteBatalha;
+    }
+
+    public boolean estaEmSeuAmbienteOrigem() {
+        return this.ambienteOrigem == this.ambienteBatalha;
     }
 }

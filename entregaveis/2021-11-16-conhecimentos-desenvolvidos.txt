@@ -1,0 +1,8 @@
+# Lista dos conhecimentos de POO a serem desenvolvidos pela equipe
+
+## O que é preciso ainda aprender?
+
+1 - Java Collection Framework (JCF)
+2 - Interfaces
+3 - Abstração
+4 - Leitura e Escrita de arquivos

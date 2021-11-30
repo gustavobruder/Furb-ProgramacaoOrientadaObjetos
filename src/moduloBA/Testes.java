@@ -1,11 +1,15 @@
+/*
 package moduloBA;
 
+import moduloBGame.Ambiente;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class Testes {
+
+    // Testes antigos que podem ser utilizados de parametro
 
     @Test
     public void deveCausarDanoComAtaqueBasico() {
@@ -81,7 +85,7 @@ public class Testes {
 
     @Test
     public void deveCausarDanoComAtaqueBasicoComBonusCasoForEmAmbienteDeOrigem() {
-        Ambiente ambiente = Ambiente.Agua;
+        Ambiente ambiente = Ambiente.AGUA;
         POOmonH agua = new POOmonH("POOmon agua");
         POOmonT terra = new POOmonT("POOmon terra");
         agua.setAmbienteBatalha(ambiente);
@@ -96,7 +100,7 @@ public class Testes {
 
     @Test
     public void deveCausarDanoComAtaqueAgressivoComBonusCasoForEmAmbienteDeOrigem() {
-        Ambiente ambiente = Ambiente.Agua;
+        Ambiente ambiente = Ambiente.AGUA;
         POOmonH agua = new POOmonH("POOmon agua");
         POOmonT terra = new POOmonT("POOmon terra");
         agua.setAmbienteBatalha(ambiente);
@@ -113,7 +117,7 @@ public class Testes {
 
     @Test
     public void deveCausarDanoComAtaqueCruelComBonusCasoForEmAmbienteDeOrigem() {
-        Ambiente ambiente = Ambiente.Agua;
+        Ambiente ambiente = Ambiente.AGUA;
         POOmonH agua = new POOmonH("POOmon agua");
         POOmonT terra = new POOmonT("POOmon terra");
         agua.setAmbienteBatalha(ambiente);
@@ -131,7 +135,7 @@ public class Testes {
 
     @Test
     public void deveCausarDanoReduzidoComAtaqueBasicoCasoDefensorForEmAmbienteDeOrigem() {
-        Ambiente ambiente = Ambiente.Terra;
+        Ambiente ambiente = Ambiente.TERRA;
         POOmonH agua = new POOmonH("POOmon agua");
         POOmonT terra = new POOmonT("POOmon terra");
         agua.setAmbienteBatalha(ambiente);
@@ -146,7 +150,7 @@ public class Testes {
 
     @Test
     public void deveCausarDanoReduzidoComAtaqueAgressivoCasoDefensorForEmAmbienteDeOrigem() {
-        Ambiente ambiente = Ambiente.Terra;
+        Ambiente ambiente = Ambiente.TERRA;
         POOmonH agua = new POOmonH("POOmon agua");
         POOmonT terra = new POOmonT("POOmon terra");
         agua.setAmbienteBatalha(ambiente);
@@ -163,7 +167,7 @@ public class Testes {
 
     @Test
     public void deveCausarDanoReduzidoComAtaqueCruelCasoDefensorForEmAmbienteDeOrigem() {
-        Ambiente ambiente = Ambiente.Terra;
+        Ambiente ambiente = Ambiente.TERRA;
         POOmonH agua = new POOmonH("POOmon agua");
         POOmonT terra = new POOmonT("POOmon terra");
         agua.setAmbienteBatalha(ambiente);
@@ -178,3 +182,4 @@ public class Testes {
         assertTrue(agua.getEnergiaVital() < 401);
     }
 }
+*/

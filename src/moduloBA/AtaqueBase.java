@@ -7,8 +7,10 @@ public abstract class AtaqueBase implements IAtaque {
     protected POOmonComportamento pooMonAtacante;
     protected POOmonComportamento pooMondefensor;
     protected Ambiente ambiente;
+    private String nomeAtaque;
 
-    protected AtaqueBase(POOmonComportamento pooMonAtacante, POOmonComportamento pooMondefensor, Ambiente ambiente) {
+    protected AtaqueBase(String nomeAtaque, POOmonComportamento pooMonAtacante, POOmonComportamento pooMondefensor, Ambiente ambiente) {
+        this.nomeAtaque = nomeAtaque;
         this.pooMonAtacante = pooMonAtacante;
         this.pooMondefensor = pooMondefensor;
         this.ambiente = ambiente;
@@ -27,4 +29,9 @@ public abstract class AtaqueBase implements IAtaque {
     protected boolean estaEmSeuAmbienteOrigem(POOmonComportamento pooMon) {
         return pooMon.getAmbienteOriginario() == this.ambiente;
     }
-} 
+
+    @Override
+    public String getNomeAtaque() {
+        return this.nomeAtaque;
+    }
+}

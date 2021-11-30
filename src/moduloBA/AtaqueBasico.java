@@ -7,7 +7,7 @@ public class AtaqueBasico extends AtaqueBase {
     private final int danoBaseAtaque;
 
     public AtaqueBasico(POOmonComportamento pooMonAtacante, POOmonComportamento pooMondefensor, Ambiente ambiente) {
-        super(pooMonAtacante, pooMondefensor, ambiente);
+        super("Basico", pooMonAtacante, pooMondefensor, ambiente);
         this.danoBaseAtaque = 30;
     }
 

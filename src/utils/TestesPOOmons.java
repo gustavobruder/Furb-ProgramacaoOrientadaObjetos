@@ -1,5 +1,7 @@
-package moduloBA;
+package utils;
 
+import moduloBA.POOmonH;
+import moduloBA.POOmonT;
 import moduloBGame.Ambiente;
 import org.junit.jupiter.api.Test;
 
@@ -13,10 +15,12 @@ public class TestesPOOmons {
     public void deveCausarDanoComAtaqueBasico() {
         POOmonH agua = new POOmonH();
         POOmonT terra = new POOmonT();
+        agua.informarOponente(terra);
+        terra.informarOponente(agua);
         agua.carregar(-480);
 
         // 30 dano
-        agua.atacar(terra, Ambiente.AR);
+        agua.atacar(Ambiente.AR);
 
         assertEquals(terra.getEnergia(), 470);
         assertEquals(agua.getEnergia(), 20);
@@ -26,10 +30,12 @@ public class TestesPOOmons {
     public void deveCausarDanoComAtaqueAgressivo() {
         POOmonH agua = new POOmonH();
         POOmonT terra = new POOmonT();
+        agua.informarOponente(terra);
+        terra.informarOponente(agua);
         agua.carregar(-400);
 
         // 40 a 99 dano
-        agua.atacar(terra, Ambiente.AR);
+        agua.atacar(Ambiente.AR);
 
         assertTrue(terra.getEnergia() > 400);
         assertTrue(terra.getEnergia() < 461);
@@ -39,9 +45,11 @@ public class TestesPOOmons {
     public void deveCausarDanoComAtaqueCruel() {
         POOmonH agua = new POOmonH();
         POOmonT terra = new POOmonT();
+        agua.informarOponente(terra);
+        terra.informarOponente(agua);
 
         // 100 a 200 dano
-        agua.atacar(terra, Ambiente.AR);
+        agua.atacar(Ambiente.AR);
 
         assertTrue(terra.getEnergia() > 199);
         assertTrue(terra.getEnergia() < 351);

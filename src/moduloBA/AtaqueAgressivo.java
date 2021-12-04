@@ -14,10 +14,17 @@ public class AtaqueAgressivo extends AtaqueBase {
     }
 
     @Override
-    public int getDanoAplicado() throws AtaqueInvalidoException {
-        if (this.danoBaseAtaque >= this.pooMonAtacante.getEnergia()) {
-            throw new AtaqueInvalidoException("Dano de ataque não pode ser maior ou igual a energia vital");
-        }
+    public boolean consegueRealizarAtaque() {
+        return this.danoBaseAtaque < this.pooMonAtacante.getEnergia();
+    }
+
+    @Override
+    public int getDanoAplicado() {
+        return this.danoBaseAtaque;
+    }
+
+    @Override
+    public int getDanoAplicadoConsiderandoAmbiente() {
         return getDanoConsiderandoAmbiente(this.danoBaseAtaque);
     }
 

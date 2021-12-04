@@ -1,7 +1,9 @@
 package moduloBA;
 
 public interface IAtaque {
-    int getDanoAplicado() throws AtaqueInvalidoException;
+    boolean consegueRealizarAtaque();
+    int getDanoAplicado();
+    int getDanoAplicadoConsiderandoAmbiente();
     int getDanoConsumido();
     String getNomeAtaque();
 }

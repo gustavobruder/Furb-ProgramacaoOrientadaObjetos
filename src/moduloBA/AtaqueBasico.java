@@ -12,7 +12,17 @@ public class AtaqueBasico extends AtaqueBase {
     }
 
     @Override
+    public boolean consegueRealizarAtaque() {
+        return true;
+    }
+
+    @Override
     public int getDanoAplicado() {
+        return this.danoBaseAtaque;
+    }
+
+    @Override
+    public int getDanoAplicadoConsiderandoAmbiente() {
         return getDanoConsiderandoAmbiente(this.danoBaseAtaque);
     }
 

@@ -20,13 +20,10 @@ public abstract class AtaqueBase implements IAtaque {
         if (estaEmSeuAmbienteOrigem(this.pooMonAtacante)) {
             danoAtaque = (int) (danoAtaque * 1.2);
         }
-        if (estaEmSeuAmbienteOrigem(this.pooMondefensor)) {
-            danoAtaque = (int) (danoAtaque * 0.9);
-        }
         return danoAtaque;
     }
 
-    protected boolean estaEmSeuAmbienteOrigem(POOmonComportamento pooMon) {
+    private boolean estaEmSeuAmbienteOrigem(POOmonComportamento pooMon) {
         return pooMon.getAmbienteOriginario() == this.ambiente;
     }
 

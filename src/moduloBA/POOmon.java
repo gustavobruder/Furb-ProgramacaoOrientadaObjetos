@@ -16,6 +16,7 @@ public abstract class POOmon implements POOmonComportamento {
     private Ambiente ambienteOriginario;
     private int energia;
     private Mediador mediador;
+    private POOmonComportamento pooMonAdversario;
 
     public POOmon(String nome, String historia, Ambiente ambienteOriginario) {
         this.setNome(nome);
@@ -56,9 +57,10 @@ public abstract class POOmon implements POOmonComportamento {
     }
 
     public void informarOponente(POOmonComportamento pooMonOponente) {
+        this.pooMonAdversario = pooMonOponente;
         this.inicializarEstatisticas();
 
-        String path = getLogsBatalhasPath(pooMonOponente);
+        String path = getLogsBatalhasPath(this.pooMonAdversario);
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(path, false))) {
 
             bw.append("Log de batalha");
@@ -66,55 +68,87 @@ public abstract class POOmon implements POOmonComportamento {
             bw.append("POOmon: ").append(this.getNome()).append(" - ").append(this.getAmbienteOriginario().name());
             bw.newLine();
             bw.newLine();
-            bw.append("Oponente: ").append(pooMonOponente.getNome()).append(" - ").append(pooMonOponente.getAmbienteOriginario().name());
+            bw.append("Oponente: ").append(this.pooMonAdversario.getNome()).append(" - ").append(this.pooMonAdversario.getAmbienteOriginario().name());
             bw.newLine();
 
-            LocalDateTime agora = LocalDateTime.now();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss");
-            bw.append("Minha energia vital: ").append(String.valueOf(this.getEnergia())).append(" – ").append(agora.format(formatter));
-            bw.newLine();
+//            LocalDateTime agora = LocalDateTime.now();
+//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss");
+//            bw.append("Minha energia vital: ").append(String.valueOf(this.getEnergia())).append(" – ").append(agora.format(formatter));
+//            bw.newLine();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void atacar(POOmonComportamento pooMonAdversario, Ambiente ambiente) {
+    public void atacar(Ambiente ambiente) {
         IAtaque ataque;
-        int danoAplicado = 0;
+        ataque = new AtaqueCruel(this, this.pooMonAdversario, ambiente);
 
-        ataque = new AtaqueCruel(this, pooMonAdversario, ambiente);
-        danoAplicado = tentarRealizarAtaque(ataque);
-        if (danoAplicado == 0) {
-            ataque = new AtaqueAgressivo(this, pooMonAdversario, ambiente);
-            danoAplicado = tentarRealizarAtaque(ataque);
+        if (!ataque.consegueRealizarAtaque()) {
+            ataque = new AtaqueAgressivo(this, this.pooMonAdversario, ambiente);
         }
-        if (danoAplicado == 0) {
-            ataque = new AtaqueBasico(this, pooMonAdversario, ambiente);
-            danoAplicado = tentarRealizarAtaque(ataque);
+        if (!ataque.consegueRealizarAtaque()) {
+            ataque = new AtaqueBasico(this, this.pooMonAdversario, ambiente);
         }
 
-        pooMonAdversario.receberAtaque(danoAplicado, ambiente);
-        this.carregar(ataque.getDanoConsumido() * -1); // transformar numero em negativo
+        this.pooMonAdversario.receberAtaque(ataque.getDanoAplicadoConsiderandoAmbiente(), ambiente);
+        this.aplicarDanoConsumido(ataque, ambiente);
     }
 
-    private int tentarRealizarAtaque(IAtaque ataque){
-        int danoAplicado = 0;
-        try {
-            danoAplicado = ataque.getDanoAplicado();
-        } catch (AtaqueInvalidoException e) {
+    private void aplicarDanoConsumido(IAtaque ataque, Ambiente ambiente) {
+        String path = getLogsBatalhasPath(this.pooMonAdversario);
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(path, true))) {
+            bw.append("Ataque efetuado: ");
+            bw.append(ataque.getNomeAtaque()).append(" ");
+            bw.append(Integer.toString(ataque.getDanoAplicado())).append(" ");
+            bw.append("(").append(Integer.toString(ataque.getDanoAplicadoConsiderandoAmbiente())).append(")");
+            bw.append(" - ");
+            bw.append(ambiente.name()).append(" ");
+            bw.append("(-").append(Integer.toString(ataque.getDanoConsumido())).append(")");
+            bw.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return danoAplicado;
+
+        this.carregar(ataque.getDanoConsumido() * -1);
     }
 
     @Override
     public void receberAtaque(int danoAtaque, Ambiente ambiente) {
-        danoAtaque *= -1; // transformar numero em negativo
-        this.carregar(danoAtaque);
+        int danoAtaqueConsiderandoAmbiente = danoAtaque;
+        if (this.getAmbienteOriginario() == ambiente) {
+            danoAtaqueConsiderandoAmbiente = (int) (danoAtaqueConsiderandoAmbiente * 0.9);
+        }
+
+        String path = getLogsBatalhasPath(this.pooMonAdversario);
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(path, true))) {
+            bw.append("Ataque recebido: ");
+            bw.append(Integer.toString(danoAtaque));
+            bw.append(" – ");
+            bw.append(ambiente.name()).append(" ");
+            bw.append("(-").append(Integer.toString(danoAtaqueConsiderandoAmbiente)).append(")");
+            bw.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        danoAtaqueConsiderandoAmbiente *= -1; // transformar numero em negativo
+        this.carregar(danoAtaqueConsiderandoAmbiente);
     }
 
     @Override
     public void carregar(int energia) {
+        if (energia > 0) {
+            String path = getLogsBatalhasPath(this.pooMonAdversario);
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(path, true))) {
+                bw.append("Energia recebida: ");
+                bw.append(Integer.toString(energia));
+                bw.newLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         this.energia += energia;
     }
 
@@ -229,12 +263,24 @@ public abstract class POOmon implements POOmonComportamento {
 
     @Override
     public void vitoria() {
-        // todo impl...
+        String path = getLogsBatalhasPath(this.pooMonAdversario);
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(path, true))) {
+            bw.append("Vitória");
+            bw.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void derrota() {
-        // todo impl...
+        String path = getLogsBatalhasPath(this.pooMonAdversario);
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(path, true))) {
+            bw.append("Derrota");
+            bw.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /** getters */

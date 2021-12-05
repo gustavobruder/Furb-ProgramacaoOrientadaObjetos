@@ -3,6 +3,7 @@ package utils;
 import moduloBA.POOmonH;
 import moduloBA.POOmonT;
 import moduloBGame.Ambiente;
+import moduloBGame.Mediador;
 import org.junit.jupiter.api.Test;
 
 import java.awt.*;
@@ -11,10 +12,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TestesPOOmons {
 
+    private final Mediador mediador = new MediadorCombate();
+
     @Test
     public void deveCausarDanoComAtaqueBasico() {
         POOmonH agua = new POOmonH();
         POOmonT terra = new POOmonT();
+        agua.setMediador(this.mediador);
+        terra.setMediador(this.mediador);
         agua.informarOponente(terra);
         terra.informarOponente(agua);
         agua.carregar(-480);
@@ -30,6 +35,8 @@ public class TestesPOOmons {
     public void deveCausarDanoComAtaqueAgressivo() {
         POOmonH agua = new POOmonH();
         POOmonT terra = new POOmonT();
+        agua.setMediador(this.mediador);
+        terra.setMediador(this.mediador);
         agua.informarOponente(terra);
         terra.informarOponente(agua);
         agua.carregar(-400);
@@ -45,6 +52,8 @@ public class TestesPOOmons {
     public void deveCausarDanoComAtaqueCruel() {
         POOmonH agua = new POOmonH();
         POOmonT terra = new POOmonT();
+        agua.setMediador(this.mediador);
+        terra.setMediador(this.mediador);
         agua.informarOponente(terra);
         terra.informarOponente(agua);
 

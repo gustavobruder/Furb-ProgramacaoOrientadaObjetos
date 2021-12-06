@@ -15,14 +15,17 @@ public abstract class POOmon implements POOmonComportamento {
     private String historia;
     private Ambiente ambienteOriginario;
     private int energia;
+
     private Mediador mediador;
     private POOmonComportamento pooMonAdversario;
+    private Estatisticas estatisticas;
 
     public POOmon(String nome, String historia, Ambiente ambienteOriginario) {
         this.setNome(nome);
         this.setHistoria(historia);
         this.setAmbienteOriginario(ambienteOriginario);
         this.energia = 500;
+        this.estatisticas = new Estatisticas();
     }
 
     private void inicializarArquivoBatalhas() {
@@ -44,32 +47,11 @@ public abstract class POOmon implements POOmonComportamento {
 
     private void inicializarArquivoEstatisticas() {
         String path = getEstatisticasPath();
+        this.estatisticas.setNomeArquivo(path);
+
         File arquivoEstatisticas = new File(path);
         if (arquivoEstatisticas.exists()) {
-            return;
-        }
-
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(path, false))) {
-            String linhaCabecalho = String.join(
-                    ";",
-                    "qtd_activacoes",
-                    "qtd_vitorias",
-                    "maior_energia_vital",
-                    "momento_maior_energia_vital"
-            );
-            bw.append(linhaCabecalho);
-            bw.newLine();
-            String linhaDados = String.join(
-                    ";",
-                    "0",
-                    "0",
-                    Integer.toString(this.getEnergia()),
-                    LocalDateTime.now().toString()
-            );
-            bw.append(linhaDados);
-            bw.newLine();
-        } catch (IOException e) {
-            e.printStackTrace();
+            this.estatisticas.CarregarEstatisticas();
         }
     }
 
@@ -77,6 +59,7 @@ public abstract class POOmon implements POOmonComportamento {
         this.pooMonAdversario = pooMonOponente;
         this.inicializarArquivoBatalhas();
         this.inicializarArquivoEstatisticas();
+        this.estatisticas.incQtdActivacoes();
 
         String log = new StringBuilder()
             .append("\n")
@@ -153,10 +136,20 @@ public abstract class POOmon implements POOmonComportamento {
 
     @Override
     public void carregar(int energia) {
-        if (energia > 0) {
-            this.adicionarLog("Energia recebida: " + energia);
-        }
         this.energia += energia;
+        if (energia > 0) {
+            String log = new StringBuilder()
+                    .append("Energia recebida: ")
+                    .append(energia)
+                    .append("\n")
+                    .append(this.logMinhaEnergiaVital())
+                    .toString();
+            this.adicionarLog(log);
+        }
+
+        if (this.energia > this.estatisticas.getMaiorEnergiaVital()) {
+            this.estatisticas.setMaiorEnergiaVital(this.energia);
+        }
     }
 
     @Override
@@ -186,58 +179,27 @@ public abstract class POOmon implements POOmonComportamento {
 
     @Override
     public int getQtdActivacoes() {
-        String qtdAtivacoes = getEstatistica(0);
-        if (qtdAtivacoes == null) {
-            return 0;
-        }
-        return Integer.parseInt(qtdAtivacoes);
+        return this.estatisticas.getQtdActivacoes();
     }
 
     @Override
     public int getVitorias() {
-        String qtdVitorias = getEstatistica(1);
-        if (qtdVitorias == null) {
-            return 0;
-        }
-        return Integer.parseInt(qtdVitorias);
+        return this.estatisticas.getVitorias();
     }
 
     @Override
     public int getMaiorEnergiaVital() {
-        String maiorEnergiaVital = getEstatistica(2);
-        if (maiorEnergiaVital == null) {
-            return 0;
-        }
-        return Integer.parseInt(maiorEnergiaVital);
+        return this.estatisticas.getMaiorEnergiaVital();
     }
 
     @Override
     public LocalDateTime getMomentoMaiorEnergiaVital() {
-        String momentoMaiorEnergiaVital = getEstatistica(3);
-        if (momentoMaiorEnergiaVital == null) {
-            return null;
-        }
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
-        return LocalDateTime.parse(momentoMaiorEnergiaVital, formatter);
-    }
-
-    private String getEstatistica(int index) {
-        String path = getEstatisticasPath();
-        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
-            br.readLine(); // consumir header do arquivo
-
-            String linha = br.readLine();
-            String[] dados = linha.split(";");
-            return dados[index];
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return this.estatisticas.getMomentoMaiorEnergiaVital();
     }
 
     private String getEstatisticasPath() {
         String nomeArquivo = String.format("equipe-A-%s-estatisticas", this.getNome().toLowerCase());
-        return String.format("%s\\%s.txt", this.mediador.getPastaDados(), nomeArquivo);
+        return String.format("%s\\%s.ser", this.mediador.getPastaDados(), nomeArquivo);
     }
 
     private String getLogsBatalhasPath() {
@@ -252,6 +214,7 @@ public abstract class POOmon implements POOmonComportamento {
 
     @Override
     public void vitoria() {
+        this.estatisticas.incVitorias();
         this.adicionarLog("Vitória");
     }
 
